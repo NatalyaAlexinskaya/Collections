@@ -34,7 +34,6 @@ public class QueueRequests {
     }
 
     class AddClient implements Runnable {
-
         @Override
         public void run() {
             for (int i = 1; i < 5; i++) {
@@ -46,7 +45,6 @@ public class QueueRequests {
     }
 
     class NameClient implements Runnable {
-
         @Override
         public void run() {
             for (ClientRequest client : queue) {

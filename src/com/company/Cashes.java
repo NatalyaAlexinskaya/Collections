@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class Cashes {
@@ -13,8 +14,9 @@ public class Cashes {
 
         while (true) {
             String string = scanner.nextLine();
+            boolean check = checkMap(string, map).isPresent();
 
-            if (map.containsKey(string)) {
+            if (check) {
                 System.out.println(map.get(string));
                 break;
             } else {
@@ -33,4 +35,14 @@ public class Cashes {
             e.printStackTrace();
         }
     }
+
+    public static Optional<URL> checkMap(String string, Map<String, URL> map) {
+        if (map.containsKey(string)) {
+            return Optional.of(map.get(string));
+        } else {
+            return Optional.empty();
+        }
+    }
 }
+
+//Класс Optional не рекомендуется использовать в качестве входящих параметров методов, потому что он не реализует интерфейс Serializable.

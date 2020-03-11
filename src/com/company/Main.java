@@ -5,31 +5,28 @@ import java.util.*;
 public class Main {
 
     public static void main(String[] args) {
+        Order factory = new Order();
         List<Order> orders = new ArrayList<>();
-        orders.add(new Order(OrderStatus.NOT_STARTED, 6));
-        orders.add(new Order(OrderStatus.PROCESSING, 3));
-        orders.add(new Order(OrderStatus.COMPLETED, 4));
-        orders.add(new Order(OrderStatus.COMPLETED, 5));
-        orders.add(new Order(OrderStatus.NOT_STARTED, 3));
-        orders.add(new Order(OrderStatus.NOT_STARTED, 8));
-        orders.add(new Order(OrderStatus.COMPLETED, 5));
-        orders.add(new Order(OrderStatus.NOT_STARTED, 2));
-        orders.add(new Order(OrderStatus.PROCESSING, 5));
+        orders.add(factory.notStarted(3));
+        orders.add(factory.completed(5));
+        orders.add(factory.processing(3));
+        orders.add(factory.completed(3));
+        orders.add(factory.processing(2));
+        orders.add(factory.completed(5));
+        orders.add(factory.notStarted(4));
 
-        for (Order order : orders) {
-            if (order.getStatus().equals(OrderStatus.COMPLETED) && order.getItems() == Order.filter) {
-                System.out.println(order.toString());
-            }
-        }
+        orders.stream()
+                .filter(order -> factory.getFilter(order, Order.filter))
+                .forEach(System.out::println);
     }
 
     public enum OrderStatus {
         NOT_STARTED, PROCESSING, COMPLETED
     }
 
-    public static class Order {
-        private final OrderStatus status;
-        private static final int filter = 5;
+    public static class Order implements OrderFactory {
+        private OrderStatus status;
+        public static final int filter = 5;
         private int items;
 
         public Order(OrderStatus status, int items) {
@@ -37,12 +34,26 @@ public class Main {
             this.items = items;
         }
 
-        public OrderStatus getStatus() {
-            return status;
+        public Order() {
         }
 
-        public int getItems() {
-            return items;
+        public boolean getFilter(Order order, int filter) {
+            return order.status.equals(OrderStatus.COMPLETED) && order.items == filter;
+        }
+    }
+
+    public interface OrderFactory {
+        default Order notStarted(int items) {
+            return new Order(OrderStatus.NOT_STARTED, items);
+        }
+
+        default Order processing(int items) {
+            return new Order(OrderStatus.PROCESSING, items);
+        }
+
+        default Order completed(int items) {
+            return new Order(OrderStatus.COMPLETED, items);
         }
     }
 }
+
